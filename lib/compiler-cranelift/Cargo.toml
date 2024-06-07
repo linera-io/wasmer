@@ -1,5 +1,5 @@
 [package]
-name = "wasmer-compiler-cranelift"
+name = "linera-wasmer-compiler-cranelift"
 description = "Cranelift compiler for Wasmer WebAssembly runtime"
 categories = ["wasm"]
 keywords = ["wasm", "webassembly", "compiler", "cranelift"]
@@ -11,10 +11,10 @@ homepage.workspace = true
 license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version.workspace = true
+version = "4.3.6-linera.3"
 
 [dependencies]
-wasmer-compiler = { path = "../compiler", version = "=4.3.6", features = ["translator", "compiler"], default-features = false }
+wasmer-compiler = { package = "linera-wasmer-compiler", path = "../compiler", version = "=4.3.6-linera.3", features = ["translator", "compiler"], default-features = false }
 wasmer-types = { path = "../types", version = "=4.3.6", default-features = false, features = ["std"] }
 cranelift-entity = { version = "0.91.1", default-features = false }
 cranelift-codegen = { version = "0.91.1", default-features = false, features = ["x86", "arm64", "riscv64"] }

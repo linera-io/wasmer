@@ -46,7 +46,7 @@ wasmer-types = { path = "../types", version = "=4.3.6" }
 target-lexicon = { version = "0.12.2", default-features = false }
 # - Optional dependencies for `sys`.
 wasmer-compiler-singlepass = { package = "linera-wasmer-compiler-singlepass", path = "../compiler-singlepass", version = "=4.3.6-linera.3", optional = true }
-#wasmer-compiler-cranelift = { path = "../compiler-cranelift", version = "=4.3.6", optional = true }
+wasmer-compiler-cranelift = { package = "linera-wasmer-compiler-cranelift", path = "../compiler-cranelift", version = "=4.3.6-linera.3", optional = true }
 #wasmer-compiler-llvm = { path = "../compiler-llvm", version = "=4.3.6", optional = true }
 
 wasm-bindgen = { version = "0.2.74", optional = true }
@@ -102,12 +102,11 @@ core = ["hashbrown"]
 
 # Features for `sys`.
 sys = ["wasmer-compiler/translator", "wasmer-compiler/compiler", "std"]
-#sys-default = ["sys", "wat", "cranelift"]
-sys-default = ["sys", "wat"]
+sys-default = ["sys", "wat", "cranelift"]
 # - Compilers.
 compiler = ["sys"]
 singlepass = ["compiler", "wasmer-compiler-singlepass"]
-#cranelift = ["compiler", "wasmer-compiler-cranelift"]
+cranelift = ["compiler", "wasmer-compiler-cranelift"]
 #llvm = ["compiler", "wasmer-compiler-llvm"]
 # - Engines.
 engine = ["sys"]
