@@ -1,5 +1,5 @@
 [package]
-name = "wasmer"
+name = "linera-wasmer"
 description = "High-performance WebAssembly runtime"
 categories = ["wasm"]
 keywords = ["wasm", "webassembly", "runtime", "vm"]
@@ -10,7 +10,7 @@ homepage.workspace = true
 license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version.workspace = true
+version = "4.3.1-linera.1"
 
 #####
 # This crate comes in 2 major flavors:
@@ -39,15 +39,15 @@ shared-buffer = { workspace = true }
 # Dependencies and Development Dependencies for `sys`.
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 # - Mandatory dependencies for `sys`.
-wasmer-vm = { path = "../vm", version = "=4.3.1" }
-wasmer-compiler = { path = "../compiler", version = "=4.3.1" }
+wasmer-vm = { package = "linera-wasmer-vm", path = "../vm", version = "=4.3.1-linera.1" }
+wasmer-compiler = { package = "linera-wasmer-compiler", path = "../compiler", version = "=4.3.1-linera.1" }
 wasmer-derive = { path = "../derive", version = "=4.3.1" }
 wasmer-types = { path = "../types", version = "=4.3.1" }
 target-lexicon = { version = "0.12.2", default-features = false }
 # - Optional dependencies for `sys`.
-wasmer-compiler-singlepass = { path = "../compiler-singlepass", version = "=4.3.1", optional = true }
-wasmer-compiler-cranelift = { path = "../compiler-cranelift", version = "=4.3.1", optional = true }
-wasmer-compiler-llvm = { path = "../compiler-llvm", version = "=4.3.1", optional = true }
+wasmer-compiler-singlepass = { package = "linera-wasmer-compiler-singlepass", path = "../compiler-singlepass", version = "=4.3.1-linera.1", optional = true }
+#wasmer-compiler-cranelift = { path = "../compiler-cranelift", version = "=4.3.1", optional = true }
+#wasmer-compiler-llvm = { path = "../compiler-llvm", version = "=4.3.1", optional = true }
 
 wasm-bindgen = { version = "0.2.74", optional = true }
 js-sys = { version = "0.3.51", optional = true }
@@ -102,12 +102,13 @@ core = ["hashbrown"]
 
 # Features for `sys`.
 sys = ["wasmer-compiler/translator", "wasmer-compiler/compiler", "std"]
-sys-default = ["sys", "wat", "cranelift"]
+#sys-default = ["sys", "wat", "cranelift"]
+sys-default = ["sys", "wat"]
 # - Compilers.
 compiler = ["sys"]
 singlepass = ["compiler", "wasmer-compiler-singlepass"]
-cranelift = ["compiler", "wasmer-compiler-cranelift"]
-llvm = ["compiler", "wasmer-compiler-llvm"]
+#cranelift = ["compiler", "wasmer-compiler-cranelift"]
+#llvm = ["compiler", "wasmer-compiler-llvm"]
 # - Engines.
 engine = ["sys"]
 # - Deprecated features.

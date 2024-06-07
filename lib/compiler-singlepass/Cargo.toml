@@ -1,5 +1,5 @@
 [package]
-name = "wasmer-compiler-singlepass"
+name = "linera-wasmer-compiler-singlepass"
 description = "Singlepass compiler for Wasmer WebAssembly runtime"
 categories = ["wasm"]
 keywords = ["wasm", "webassembly", "compiler", "singlepass"]
@@ -11,10 +11,10 @@ homepage.workspace = true
 license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version.workspace = true
+version = "4.3.1-linera.1"
 
 [dependencies]
-wasmer-compiler = { path = "../compiler", version = "=4.3.1", features = ["translator", "compiler"], default-features = false }
+wasmer-compiler = { package = "linera-wasmer-compiler", path = "../compiler", version = "=4.3.1-linera.1", features = ["translator", "compiler"], default-features = false }
 wasmer-types = { path = "../types", version = "=4.3.1", default-features = false, features = ["std"] }
 hashbrown = { version = "0.11", optional = true }
 gimli = { version = "0.26", optional = true }

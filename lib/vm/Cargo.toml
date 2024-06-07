@@ -1,5 +1,5 @@
 [package]
-name = "wasmer-vm"
+name = "linera-wasmer-vm"
 description = "Runtime library support for Wasmer"
 categories = ["wasm"]
 keywords = ["wasm", "webassembly"]
@@ -10,7 +10,7 @@ edition.workspace = true
 homepage.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version.workspace = true
+version = "4.3.1-linera.1"
 
 [dependencies]
 memoffset.workspace = true
