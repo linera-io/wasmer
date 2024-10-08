@@ -11,11 +11,11 @@ homepage.workspace = true
 license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version = "4.3.6-linera.4"
+version = "4.4.0-linera.5"
 
 [dependencies]
-wasmer-compiler = { package = "linera-wasmer-compiler", path = "../compiler", version = "=4.3.6-linera.4", features = ["translator", "compiler"], default-features = false }
-wasmer-types = { path = "../types", version = "=4.3.6", default-features = false, features = ["std"] }
+wasmer-compiler = { package = "linera-wasmer-compiler", path = "../compiler", version = "=4.4.0-linera.5", features = ["translator", "compiler"], default-features = false }
+wasmer-types = { path = "../types", version = "=4.4.0", default-features = false, features = ["std"] }
 cranelift-entity = { version = "0.91.1", default-features = false }
 cranelift-codegen = { version = "0.91.1", default-features = false, features = ["x86", "arm64", "riscv64"] }
 cranelift-frontend = { version = "0.91.1", default-features = false }

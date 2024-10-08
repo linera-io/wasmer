@@ -711,6 +711,26 @@ mod queries {
         pub endpoint: String,
     }
 
+    #[derive(cynic::QueryVariables, Debug)]
+    pub struct RotateS3SecretsForAppVariables {
+        pub id: cynic::Id,
+    }
+
+    #[derive(cynic::QueryFragment, Debug)]
+    #[cynic(
+        graphql_type = "Mutation",
+        variables = "RotateS3SecretsForAppVariables"
+    )]
+    pub struct RotateS3SecretsForApp {
+        #[arguments(input: { id: $id })]
+        pub rotate_s3_secrets_for_app: Option<RotateS3SecretsForAppPayload>,
+    }
+
+    #[derive(cynic::QueryFragment, Debug)]
+    pub struct RotateS3SecretsForAppPayload {
+        pub client_mutation_id: Option<String>,
+    }
+
     #[derive(cynic::QueryVariables, Debug, Clone)]
     pub struct PaginationVars {
         pub offset: Option<i32>,
@@ -916,6 +936,7 @@ mod queries {
         pub id: cynic::Id,
         pub name: String,
         pub created_at: DateTime,
+        pub updated_at: DateTime,
         pub description: Option<String>,
         pub active_version: DeployAppVersion,
         pub admin_url: String,
@@ -1044,6 +1065,7 @@ mod queries {
     pub struct DeployAppVersion {
         pub id: cynic::Id,
         pub created_at: DateTime,
+        pub updated_at: DateTime,
         pub version: String,
         pub description: Option<String>,
         pub yaml_config: String,

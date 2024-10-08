@@ -38,6 +38,16 @@ pub enum ModuleHash {
     Sha256([u8; 32]),
 }
 
+#[cfg(feature = "artifact-size")]
+impl loupe::MemoryUsage for ModuleHash {
+    fn size_of_val(&self, _tracker: &mut dyn loupe::MemoryUsageTracker) -> usize {
+        match self {
+            ModuleHash::XXHash(_) => 8 * 8,
+            ModuleHash::Sha256(_) => 8 * 32,
+        }
+    }
+}
+
 impl ModuleHash {
     /// Create a new [`ModuleHash`] from the raw xxhash hash.
     pub fn xxhash_from_bytes(key: [u8; 8]) -> Self {
@@ -86,14 +96,6 @@ impl ModuleHash {
         match self {
             Self::XXHash(bytes) => bytes.as_slice(),
             Self::Sha256(bytes) => bytes.as_slice(),
-        }
-    }
-}
-
-impl From<webc::metadata::AtomSignature> for ModuleHash {
-    fn from(value: webc::metadata::AtomSignature) -> Self {
-        match value {
-            webc::metadata::AtomSignature::Sha256(bytes) => Self::Sha256(bytes),
         }
     }
 }
