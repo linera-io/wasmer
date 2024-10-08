@@ -9,6 +9,70 @@ Looking for changes that affect our C API? See the [C API Changelog](lib/c-api/C
 
 ## **Unreleased**
 
+## 4.4.0 - 04/10/2024
+
+This release adds support for object size estimation, adds better proxy support, improves executable spawning, and contains various bug fixes.
+
+## Added
+
+  - [#5079](https://github.com/wasmerio/wasmer/pull/5079) Add feature for objects' sizes estimation
+  - [#5125](https://github.com/wasmerio/wasmer/pull/5125) oss-fuzz: add cifuzz
+  - [#5110](https://github.com/wasmerio/wasmer/pull/5110) Add new --invoke arg for choosing entry function for single WASM modules + fix --invoke not working for WASI(X) modules
+  - [#5090](https://github.com/wasmerio/wasmer/pull/5090) Add the right to fetch stats on pipes
+  - [#5088](https://github.com/wasmerio/wasmer/pull/5088) Various cleanup chores + add a new test
+
+## Changed
+
+  - [#5127](https://github.com/wasmerio/wasmer/pull/5127) Implement proper executable spawn
+  - [#5098](https://github.com/wasmerio/wasmer/pull/5098) `js::module`: leave warning comment on the `Send` impl
+  - [#5120](https://github.com/wasmerio/wasmer/pull/5120) Improve QueryError
+  - [#5118](https://github.com/wasmerio/wasmer/pull/5118) InMemory/MultiSource Improvements
+  - [#5104](https://github.com/wasmerio/wasmer/pull/5104) Transfer the file size when renamed
+  - [#5102](https://github.com/wasmerio/wasmer/pull/5102) chore(wasix): Reduce syscall instrumentation levels
+  - [#5096](https://github.com/wasmerio/wasmer/pull/5096) Update cargo-deny config
+  - [#4983](https://github.com/wasmerio/wasmer/pull/4983) deps: Upgrade some dependencies + lift to workspace root
+  - [#5092](https://github.com/wasmerio/wasmer/pull/5092) Replace `WASM_ANYREF` with `WASM_EXTERNREF`
+  - [#5091](https://github.com/wasmerio/wasmer/pull/5091) Apply the proxy setting in wasmer config
+  - [#5089](https://github.com/wasmerio/wasmer/pull/5089) feat(cli): Restore packages from webcs
+
+## Fixed
+
+  - [#5124](https://github.com/wasmerio/wasmer/pull/5124) Various fixes to get wasmer-js compiling
+  - [#5108](https://github.com/wasmerio/wasmer/pull/5108) Fix error in metering middleware
+
+
+
+## 4.3.7 - 06/09/2024
+
+This release adds support for rotating secrets, fixes a regression with the filesystem, and contains other fixes and improvments.
+
+## Added
+
+  - [#5070](https://github.com/wasmerio/wasmer/pull/5070) Add `rotate-secrets` subcommand for volumes and minor changes
+  - [#5057](https://github.com/wasmerio/wasmer/pull/5057) Add `cwd` to the manifest as a command annotation
+  - [#5060](https://github.com/wasmerio/wasmer/pull/5060) feat(backend-api): Add env var to toggle GQL variable logging
+  - [#5059](https://github.com/wasmerio/wasmer/pull/5059) feat(backend-api): Add updatedAt timestamps to Edge App/Version
+  - [#5016](https://github.com/wasmerio/wasmer/pull/5016) add access to php integration test secrets
+  - [#5036](https://github.com/wasmerio/wasmer/pull/5036) Add help-docs for the `--watch` flag in `wasmer app logs`
+
+## Changed
+
+  - [#5066](https://github.com/wasmerio/wasmer/pull/5066) Prevent redundant merging of the filesystems
+  - [#5037](https://github.com/wasmerio/wasmer/pull/5037) post slack message on integration tests ci failure
+  - [#5063](https://github.com/wasmerio/wasmer/pull/5063) refactor volumes schema
+  - [#5056](https://github.com/wasmerio/wasmer/pull/5056) Improve validation requests in "wasmer deploy"
+  - [#5053](https://github.com/wasmerio/wasmer/pull/5053) Reduce overhead of chunk timeouts in wasix package downloads
+  - [#5042](https://github.com/wasmerio/wasmer/pull/5042) Expose memory and wasi generic imports
+  - [#5040](https://github.com/wasmerio/wasmer/pull/5040) deps: bump tun-tap version for wasmer-cli
+  - [#5043](https://github.com/wasmerio/wasmer/pull/5043) Remove serde_cbor as a dependency
+  - [#5030](https://github.com/wasmerio/wasmer/pull/5030) Improve loop metering tests
+
+## Fixed
+
+  - [#5039](https://github.com/wasmerio/wasmer/pull/5039) Fix missing hash from a compiled artifact
+
+
+
 ## 4.3.6 - 22/08/2024
 
 The star of this release is the volume subcommand that allows inspecting and interacting with volumes through the client. There are also

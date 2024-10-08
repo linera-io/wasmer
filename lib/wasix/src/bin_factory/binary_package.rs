@@ -66,6 +66,8 @@ impl BinaryPackageCommand {
 #[derivative(Debug)]
 pub struct BinaryPackage {
     pub id: PackageId,
+    /// Includes the ids of all the packages in the tree
+    pub package_ids: Vec<PackageId>,
 
     pub when_cached: Option<u128>,
     /// The name of the [`BinaryPackageCommand`] which is this package's
@@ -221,6 +223,25 @@ impl BinaryPackage {
                 ModuleHash::xxhash(self.id.to_string())
             }
         })
+    }
+
+    pub fn infer_entrypoint(&self) -> Result<&str, anyhow::Error> {
+        if let Some(entrypoint) = self.entrypoint_cmd.as_deref() {
+            return Ok(entrypoint);
+        }
+
+        match self.commands.as_slice() {
+            [] => anyhow::bail!("The package doesn't contain any executable commands"),
+            [one] => Ok(one.name()),
+            [..] => {
+                let mut commands: Vec<_> = self.commands.iter().map(|cmd| cmd.name()).collect();
+                commands.sort();
+                anyhow::bail!(
+                    "Unable to determine the package's entrypoint. Please choose one of {:?}",
+                    commands,
+                );
+            }
+        }
     }
 }
 

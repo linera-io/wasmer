@@ -2,7 +2,7 @@ use std::{
     fmt::{self, Display, Formatter},
     fs::File,
     io::{BufRead, BufReader, Read},
-    path::{Path, PathBuf},
+    path::Path,
 };
 
 use anyhow::Error;
@@ -184,7 +184,7 @@ impl PackageInfo {
 fn filesystem_mapping_from_manifest(
     manifest: &Manifest,
     webc_version: webc::Version,
-) -> Result<Vec<FileSystemMapping>, serde_cbor::Error> {
+) -> Result<Vec<FileSystemMapping>, anyhow::Error> {
     match manifest.filesystem()? {
         Some(webc::metadata::annotations::FileSystemMappings(mappings)) => {
             let mappings = mappings
@@ -290,9 +290,9 @@ impl WebcHash {
         Ok(Self(hash))
     }
 
-    pub fn for_file(path: &PathBuf) -> Result<Self, std::io::Error> {
+    pub fn for_file(path: &Path) -> Result<Self, std::io::Error> {
         // check for a hash at the file location
-        let mut path_hash = path.clone();
+        let mut path_hash = path.to_owned();
         path_hash.set_extension("webc.sha256");
         if let Ok(mut file) = File::open(&path_hash) {
             let mut hash = Vec::new();
