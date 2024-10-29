@@ -11,7 +11,7 @@ use bytes::Bytes;
 use js_sys::{Reflect, Uint8Array, WebAssembly};
 use std::path::Path;
 use tracing::{debug, warn};
-use wasm_bindgen::JsValue;
+use wasm_bindgen::{JsCast as _, JsValue};
 use wasmer_types::{
     CompileError, DeserializeError, ExportsIterator, ExternType, FunctionType, GlobalType,
     ImportsIterator, MemoryType, ModuleInfo, Mutability, Pages, SerializeError, TableType, Type,
@@ -26,6 +26,7 @@ use wasmer_types::{
 ///
 /// Until that happens, we annotate the module with the expected
 /// types so we can built on top of them at runtime.
+#[cfg_attr(feature = "enable-serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ModuleTypeHints {
     /// The type hints for the imported types
@@ -34,14 +35,20 @@ pub struct ModuleTypeHints {
     pub exports: Vec<ExternType>,
 }
 
-#[derive(Clone, PartialEq, Eq)]
-pub struct Module {
-    module: JsHandle<WebAssembly::Module>,
+#[cfg_attr(feature = "enable-serde", derive(serde::Serialize, serde::Deserialize))]
+#[derive(Debug, Default, Clone, PartialEq, Eq)]
+struct ModuleMetadata {
     name: Option<String>,
     // WebAssembly type hints
     type_hints: Option<ModuleTypeHints>,
     #[cfg(feature = "js-serializable-module")]
     raw_bytes: Option<Bytes>,
+}
+
+#[derive(Clone, PartialEq, Eq)]
+pub struct Module {
+    module: JsHandle<WebAssembly::Module>,
+    metadata: ModuleMetadata,
 }
 
 // XXX
@@ -52,8 +59,43 @@ unsafe impl Send for Module {}
 unsafe impl Sync for Module {}
 
 impl From<Module> for JsValue {
-    fn from(val: Module) -> Self {
-        Self::from(val.module)
+    fn from(module: Module) -> Self {
+        use js_sys::{Object, Reflect};
+        let object = Object::new();
+        Reflect::set(&object, &"module".into(), module.module.as_ref()).unwrap();
+
+        #[cfg(feature = "enable-serde")]
+        {
+            Reflect::set(
+                &object,
+                &"metadata".into(),
+                &serde_wasm_bindgen::to_value(&module.metadata)
+                    .expect("serialization should succeed for modules"),
+            )
+            .unwrap();
+        }
+
+        object.into()
+    }
+}
+
+impl TryFrom<JsValue> for Module {
+    type Error = JsValue;
+
+    fn try_from(value: JsValue) -> Result<Self, Self::Error> {
+        use js_sys::Reflect;
+
+        #[allow(unused_assignments)]
+        let mut metadata = ModuleMetadata::default();
+        #[cfg(feature = "enable-serde")]
+        {
+            metadata = serde_wasm_bindgen::from_value(Reflect::get(&value, &"metadata".into())?)?;
+        }
+
+        Ok(Self {
+            module: JsHandle::new(Reflect::get(&value, &"module".into())?.dyn_into()?),
+            metadata,
+        })
     }
 }
 
@@ -108,10 +150,12 @@ impl Module {
 
         Self {
             module: JsHandle::new(module),
-            type_hints,
-            name,
-            #[cfg(feature = "js-serializable-module")]
-            raw_bytes: Some(binary),
+            metadata: ModuleMetadata {
+                type_hints,
+                name,
+                #[cfg(feature = "js-serializable-module")]
+                raw_bytes: Some(binary),
+            },
         }
     }
 
@@ -203,14 +247,18 @@ impl Module {
     }
 
     pub fn name(&self) -> Option<&str> {
-        self.name.as_ref().map(|s| s.as_ref())
+        self.metadata.name.as_ref().map(|s| s.as_ref())
     }
 
     pub fn serialize(&self) -> Result<Bytes, SerializeError> {
         #[cfg(feature = "js-serializable-module")]
-        return self.raw_bytes.clone().ok_or(SerializeError::Generic(
-            "Not able to serialize module".to_string(),
-        ));
+        return self
+            .metadata
+            .raw_bytes
+            .clone()
+            .ok_or(SerializeError::Generic(
+                "Not able to serialize module".to_string(),
+            ));
 
         #[cfg(not(feature = "js-serializable-module"))]
         return Err(SerializeError::Generic(
@@ -262,7 +310,7 @@ impl Module {
     }
 
     pub fn set_name(&mut self, name: &str) -> bool {
-        self.name = Some(name.to_string());
+        self.metadata.name = Some(name.to_string());
         true
         // match Reflect::set(self.module.as_ref(), &"wasmer_name".into(), &name.into()) {
         //     Ok(_) => true,
@@ -299,6 +347,7 @@ impl Module {
                         .as_string()
                         .unwrap();
                     let type_hint = self
+                        .metadata
                         .type_hints
                         .as_ref()
                         .map(|hints| hints.imports.get(i).unwrap().clone());
@@ -367,7 +416,7 @@ impl Module {
                 return Err(format!("The provided type hint for the export {} is {} which doesn't match the expected kind: {}", i, kind.as_str(), expected_kind));
             }
         }
-        self.type_hints = Some(type_hints);
+        self.metadata.type_hints = Some(type_hints);
         Ok(())
     }
 
@@ -394,6 +443,7 @@ impl Module {
                         .unwrap()
                 };
                 let type_hint = self
+                    .metadata
                     .type_hints
                     .as_ref()
                     .map(|hints| hints.exports.get(i).unwrap().clone());
@@ -449,10 +499,12 @@ impl From<WebAssembly::Module> for Module {
     fn from(module: WebAssembly::Module) -> Module {
         Module {
             module: JsHandle::new(module),
-            name: None,
-            type_hints: None,
-            #[cfg(feature = "js-serializable-module")]
-            raw_bytes: None,
+            metadata: ModuleMetadata {
+                name: None,
+                type_hints: None,
+                #[cfg(feature = "js-serializable-module")]
+                raw_bytes: None,
+            },
         }
     }
 }
