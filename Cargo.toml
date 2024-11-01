@@ -12,12 +12,12 @@ rust-version.workspace = true
 version.workspace = true
 
 [dependencies]
-wasmer = { package = "linera-wasmer", version = "=4.4.0-linera.5", path = "lib/api", default-features = false }
-wasmer-compiler = { package = "linera-wasmer-compiler", version = "=4.4.0-linera.5", path = "lib/compiler", features = [
+wasmer = { package = "linera-wasmer", version = "=4.4.0-linera.6", path = "lib/api", default-features = false }
+wasmer-compiler = { package = "linera-wasmer-compiler", version = "=4.4.0-linera.6", path = "lib/compiler", features = [
     "compiler",
 ], optional = true }
-wasmer-compiler-cranelift = { package = "linera-wasmer-compiler-cranelift", version = "=4.4.0-linera.5", path = "lib/compiler-cranelift", optional = true }
-wasmer-compiler-singlepass = { package = "linera-wasmer-compiler-singlepass", version = "=4.4.0-linera.5", path = "lib/compiler-singlepass", optional = true }
+wasmer-compiler-cranelift = { package = "linera-wasmer-compiler-cranelift", version = "=4.4.0-linera.6", path = "lib/compiler-cranelift", optional = true }
+wasmer-compiler-singlepass = { package = "linera-wasmer-compiler-singlepass", version = "=4.4.0-linera.6", path = "lib/compiler-singlepass", optional = true }
 # wasmer-compiler-llvm = { version = "=4.4.0", path = "lib/compiler-llvm", optional = true }
 # wasmer-emscripten = { version = "=4.4.0", path = "lib/emscripten", optional = true }
 # wasmer-wasix = { path = "lib/wasix", optional = true }
@@ -128,7 +128,7 @@ glob = "0.3"
 rustc_version = "0.4"
 
 [dev-dependencies]
-wasmer = { package = "linera-wasmer", version = "=4.4.0-linera.5", path = "lib/api", features = [
+wasmer = { package = "linera-wasmer", version = "=4.4.0-linera.6", path = "lib/api", features = [
     "compiler",
     "singlepass",
     "sys",
