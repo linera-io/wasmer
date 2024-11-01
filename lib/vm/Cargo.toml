@@ -10,7 +10,7 @@ edition.workspace = true
 homepage.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version = "4.4.0-linera.5"
+version = "4.4.0-linera.6"
 
 [dependencies]
 memoffset.workspace = true

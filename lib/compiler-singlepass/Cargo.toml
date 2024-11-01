@@ -11,10 +11,10 @@ homepage.workspace = true
 license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version = "4.4.0-linera.5"
+version = "4.4.0-linera.6"
 
 [dependencies]
-wasmer-compiler = { package = "linera-wasmer-compiler", path = "../compiler", version = "=4.4.0-linera.5", features = ["translator", "compiler"], default-features = false }
+wasmer-compiler = { package = "linera-wasmer-compiler", path = "../compiler", version = "=4.4.0-linera.6", features = ["translator", "compiler"], default-features = false }
 wasmer-types = { path = "../types", version = "=4.4.0", default-features = false, features = ["std"] }
 hashbrown = { version = "0.11", optional = true }
 gimli = { version = "0.26", optional = true }
