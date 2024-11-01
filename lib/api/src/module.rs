@@ -483,3 +483,11 @@ impl From<Module> for wasm_bindgen::JsValue {
         wasm_bindgen::JsValue::from(value.0)
     }
 }
+
+#[cfg(feature = "js")]
+impl TryFrom<wasm_bindgen::JsValue> for Module {
+    type Error = <module_imp::Module as TryFrom<wasm_bindgen::JsValue>>::Error;
+    fn try_from(value: wasm_bindgen::JsValue) -> Result<Self, Self::Error> {
+        value.try_into().map(Module)
+    }
+}
