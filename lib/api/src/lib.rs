@@ -20,7 +20,6 @@
     clippy::use_self
 )]
 #![allow(deprecated_cfg_attr_crate_type_name)]
-#![cfg_attr(feature = "js", crate_type = "cdylib")]
 
 //! [`Wasmer`](https://wasmer.io/) is the most popular
 //! [WebAssembly](https://webassembly.org/) runtime for Rust. It supports

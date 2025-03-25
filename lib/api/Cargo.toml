@@ -21,6 +21,9 @@ version = "4.4.0-linera.6"
 #   JavaScript host.
 #####
 
+[lib]
+crate-type = ["cdylib", "lib"]
+
 # Shared dependencies.
 [dependencies]
 # - Mandatory shared dependencies.
