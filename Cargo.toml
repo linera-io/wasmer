@@ -88,7 +88,7 @@ homepage = "https://wasmer.io/"
 license = "MIT"
 repository = "https://github.com/wasmerio/wasmer"
 rust-version = "1.74"
-version = "4.4.0"
+version = "4.4.0-linera.6"
 
 [workspace.dependencies]
 # Repo-local crates
