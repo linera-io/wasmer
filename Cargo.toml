@@ -24,7 +24,7 @@ wasmer-compiler-singlepass = { package = "linera-wasmer-compiler-singlepass", ve
 # wasmer-wast = { version = "=4.4.0", path = "tests/lib/wast", optional = true }
 # wasi-test-generator = { version = "=4.4.0", path = "tests/wasi-wast", optional = true }
 # wasmer-cache = { version = "=4.4.0", path = "lib/cache", optional = true }
-# wasmer-types = { version = "=4.4.0", path = "lib/types" }
+wasmer-types.workspace = true
 # wasmer-middlewares = { version = "=4.4.0", path = "lib/middlewares", optional = true }
 
 # Third party dependencies
@@ -96,6 +96,10 @@ wasmer-config = { path = "./lib/config" }
 wasmer-wasix = { path = "./lib/wasix" }
 
 # Wasmer-owned crates
+macro-wasmer-universal-test = "=4.4.0"
+wasmer-derive = "=4.4.0"
+wasmer-object = "=4.4.0"
+wasmer-types = "=4.4.0"
 webc = { version = "6.1.0", default-features = false, features = ["package"] }
 shared-buffer = "0.1.4"
 
