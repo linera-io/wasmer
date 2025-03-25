@@ -949,7 +949,7 @@ checksum = "97b3888a4aecf77e811145cadf6eef5901f4782c53886191b2f693f24761847c"
 
 [[package]]
 name = "linera-wasmer"
-version = "4.4.0-linera.6"
+version = "4.4.0-linera.7"
 dependencies = [
  "anyhow",
  "bytes",
@@ -985,7 +985,7 @@ dependencies = [
 
 [[package]]
 name = "linera-wasmer-compiler"
-version = "4.4.0-linera.6"
+version = "4.4.0-linera.7"
 dependencies = [
  "backtrace",
  "bytes",
@@ -1017,7 +1017,7 @@ dependencies = [
 
 [[package]]
 name = "linera-wasmer-compiler-cranelift"
-version = "4.4.0-linera.6"
+version = "4.4.0-linera.7"
 dependencies = [
  "cranelift-codegen",
  "cranelift-entity",
@@ -1036,7 +1036,7 @@ dependencies = [
 
 [[package]]
 name = "linera-wasmer-compiler-singlepass"
-version = "4.4.0-linera.6"
+version = "4.4.0-linera.7"
 dependencies = [
  "byteorder",
  "dynasm",
@@ -1055,7 +1055,7 @@ dependencies = [
 
 [[package]]
 name = "linera-wasmer-vm"
-version = "4.4.0-linera.6"
+version = "4.4.0-linera.7"
 dependencies = [
  "backtrace",
  "cc",
@@ -2345,7 +2345,7 @@ dependencies = [
 
 [[package]]
 name = "wasmer-workspace"
-version = "4.4.0-linera.6"
+version = "4.4.0-linera.7"
 dependencies = [
  "anyhow",
  "build-deps",
