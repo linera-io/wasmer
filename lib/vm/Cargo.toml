@@ -10,12 +10,12 @@ edition.workspace = true
 homepage.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version = "4.4.0-linera.6"
+version.workspace = true
 
 [dependencies]
 memoffset.workspace = true
 dashmap.workspace = true
-wasmer-types = { path = "../types", version = "=4.4.0" }
+wasmer-types.workspace = true
 libc.workspace = true
 indexmap = { version = "1.6" }
 thiserror = "1.0"

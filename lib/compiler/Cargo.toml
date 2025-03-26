@@ -10,11 +10,11 @@ homepage.workspace = true
 license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version = "4.4.0-linera.6"
+version.workspace = true
 
 [dependencies]
-wasmer-types = { path = "../types", version = "=4.4.0", default-features = false }
-wasmer-object = { path = "../object", version = "=4.4.0", optional = true }
+wasmer-types = { workspace = true, default-features = false }
+wasmer-object = { workspace = true, optional = true }
 wasmparser = { workspace = true, optional = true, default-features = false }
 enumset.workspace = true
 hashbrown = { version = "0.11", optional = true }
@@ -45,7 +45,7 @@ shared-buffer = { workspace = true }
 libc.workspace = true
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-wasmer-vm = { package = "linera-wasmer-vm", path = "../vm", version = "=4.4.0-linera.6" }
+wasmer-vm.workspace = true
 region = { version = "3.0" }
 
 [target.'cfg(target_os = "windows")'.dependencies]
