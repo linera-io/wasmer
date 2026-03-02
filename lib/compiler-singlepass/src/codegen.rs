@@ -723,9 +723,10 @@ impl<'a, M: Machine> FuncGen<'a, M> {
             let mut float_idx = 0usize;
             for (i, wp_type) in return_wptypes.iter().enumerate() {
                 if matches!(wp_type, WpType::F32 | WpType::F64) {
-                    if let Some(simd_loc) =
-                    self.machine.get_simd_return_register(float_idx, calling_convention)
-                {
+                    if let Some(simd_loc) = self
+                        .machine
+                        .get_simd_return_register(float_idx, calling_convention)
+                    {
                         return_args[i] = simd_loc;
                     }
                     float_idx += 1;
@@ -2430,7 +2431,10 @@ impl<'a, M: Machine> FuncGen<'a, M> {
                     param_types.iter().copied(),
                     return_types.iter().copied(),
                     NativeCallType::IncludeVMCtxArgument,
-                    true,
+                    // Table function pointers use the internal wasm calling convention;
+                    // the runtime installs a trampoline for imported functions so from
+                    // the caller's perspective floats are always in GPRs, not SIMD regs.
+                    false,
                 )?;
             }
             Operator::If { blockty } => {
