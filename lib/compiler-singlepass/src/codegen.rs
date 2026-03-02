@@ -643,6 +643,7 @@ impl<'a, M: Machine> FuncGen<'a, M> {
         params_type: J,
         return_types: K,
         call_type: NativeCallType,
+        use_c_abi_float_returns: bool,
     ) -> Result<(), CompileError> {
         let params = params.collect_vec();
         let stack_params = params
@@ -716,13 +717,19 @@ impl<'a, M: Machine> FuncGen<'a, M> {
         // The C ABI returns floating-point values in SIMD registers (XMM0 on x86_64,
         // V0 on ARM64, FA0 on RISC-V), not in GPRs. Fix up the return value locations
         // so that we read float results from the correct registers.
-        let mut float_idx = 0usize;
-        for (i, wp_type) in return_wptypes.iter().enumerate() {
-            if matches!(wp_type, WpType::F32 | WpType::F64) {
-                if let Some(simd_loc) = self.machine.get_simd_return_register(float_idx) {
-                    return_args[i] = simd_loc;
+        // This only applies to imported functions (called via trampolines that use C ABI).
+        // Local wasm-to-wasm calls use the internal singlepass convention (floats in GPRs).
+        if use_c_abi_float_returns {
+            let mut float_idx = 0usize;
+            for (i, wp_type) in return_wptypes.iter().enumerate() {
+                if matches!(wp_type, WpType::F32 | WpType::F64) {
+                    if let Some(simd_loc) =
+                    self.machine.get_simd_return_register(float_idx, calling_convention)
+                {
+                        return_args[i] = simd_loc;
+                    }
+                    float_idx += 1;
                 }
-                float_idx += 1;
             }
         }
 
@@ -2222,6 +2229,7 @@ impl<'a, M: Machine> FuncGen<'a, M> {
                 };
                 let calling_convention = self.calling_convention;
 
+                let is_imported = function_index < self.module.num_imported_functions;
                 self.emit_call_native(
                     |this| {
                         let offset = this
@@ -2238,6 +2246,7 @@ impl<'a, M: Machine> FuncGen<'a, M> {
                     param_types.iter().copied(),
                     return_types.iter().copied(),
                     NativeCallType::IncludeVMCtxArgument,
+                    is_imported,
                 )?;
             }
             Operator::CallIndirect {
@@ -2421,6 +2430,7 @@ impl<'a, M: Machine> FuncGen<'a, M> {
                     param_types.iter().copied(),
                     return_types.iter().copied(),
                     NativeCallType::IncludeVMCtxArgument,
+                    true,
                 )?;
             }
             Operator::If { blockty } => {
@@ -2654,6 +2664,7 @@ impl<'a, M: Machine> FuncGen<'a, M> {
                     iter::once(WpType::I64),
                     iter::once(WpType::I64),
                     NativeCallType::IncludeVMCtxArgument,
+                    true,
                 )?;
             }
             Operator::MemoryInit { data_index, mem } => {
@@ -2698,6 +2709,7 @@ impl<'a, M: Machine> FuncGen<'a, M> {
                     .cloned(),
                     iter::empty(),
                     NativeCallType::IncludeVMCtxArgument,
+                    true,
                 )?;
             }
             Operator::DataDrop { data_index } => {
@@ -2722,6 +2734,7 @@ impl<'a, M: Machine> FuncGen<'a, M> {
                     iter::once(WpType::I64),
                     iter::empty(),
                     NativeCallType::IncludeVMCtxArgument,
+                    true,
                 )?;
             }
             Operator::MemoryCopy { src_mem, .. } => {
@@ -2775,6 +2788,7 @@ impl<'a, M: Machine> FuncGen<'a, M> {
                         .cloned(),
                     iter::empty(),
                     NativeCallType::IncludeVMCtxArgument,
+                    true,
                 )?;
             }
             Operator::MemoryFill { mem } => {
@@ -2827,6 +2841,7 @@ impl<'a, M: Machine> FuncGen<'a, M> {
                         .cloned(),
                     iter::empty(),
                     NativeCallType::IncludeVMCtxArgument,
+                    true,
                 )?;
             }
             Operator::MemoryGrow { mem } => {
@@ -2866,6 +2881,7 @@ impl<'a, M: Machine> FuncGen<'a, M> {
                     [WpType::I64, WpType::I64].iter().cloned(),
                     iter::once(WpType::I64),
                     NativeCallType::IncludeVMCtxArgument,
+                    true,
                 )?;
             }
             Operator::I32Load { ref memarg } => {
@@ -3443,6 +3459,7 @@ impl<'a, M: Machine> FuncGen<'a, M> {
                     [WpType::I32].iter().cloned(),
                     iter::empty(),
                     NativeCallType::Unreachable,
+                    true,
                 )?;
                 self.unreachable_depth = 1;
             }
@@ -5302,6 +5319,7 @@ impl<'a, M: Machine> FuncGen<'a, M> {
                     iter::once(WpType::I64),
                     iter::once(WpType::Ref(WpRefType::new(true, WpHeapType::FUNC).unwrap())),
                     NativeCallType::IncludeVMCtxArgument,
+                    true,
                 )?;
             }
             Operator::RefIsNull => {
@@ -5349,6 +5367,7 @@ impl<'a, M: Machine> FuncGen<'a, M> {
                     [WpType::I32, WpType::I64, WpType::I64].iter().cloned(),
                     iter::empty(),
                     NativeCallType::IncludeVMCtxArgument,
+                    true,
                 )?;
             }
             Operator::TableGet { table: index } => {
@@ -5388,6 +5407,7 @@ impl<'a, M: Machine> FuncGen<'a, M> {
                     [WpType::I32, WpType::I64].iter().cloned(),
                     iter::once(WpType::Ref(WpRefType::new(true, WpHeapType::FUNC).unwrap())),
                     NativeCallType::IncludeVMCtxArgument,
+                    true,
                 )?;
             }
             Operator::TableSize { table: index } => {
@@ -5421,6 +5441,7 @@ impl<'a, M: Machine> FuncGen<'a, M> {
                     iter::once(WpType::I32),
                     iter::once(WpType::I32),
                     NativeCallType::IncludeVMCtxArgument,
+                    true,
                 )?;
             }
             Operator::TableGrow { table: index } => {
@@ -5462,6 +5483,7 @@ impl<'a, M: Machine> FuncGen<'a, M> {
                     [WpType::I64, WpType::I64, WpType::I64].iter().cloned(),
                     iter::once(WpType::I32),
                     NativeCallType::IncludeVMCtxArgument,
+                    true,
                 )?;
             }
             Operator::TableCopy {
@@ -5509,6 +5531,7 @@ impl<'a, M: Machine> FuncGen<'a, M> {
                     .cloned(),
                     iter::empty(),
                     NativeCallType::IncludeVMCtxArgument,
+                    true,
                 )?;
             }
 
@@ -5547,6 +5570,7 @@ impl<'a, M: Machine> FuncGen<'a, M> {
                         .cloned(),
                     iter::empty(),
                     NativeCallType::IncludeVMCtxArgument,
+                    true,
                 )?;
             }
             Operator::TableInit { elem_index, table } => {
@@ -5591,6 +5615,7 @@ impl<'a, M: Machine> FuncGen<'a, M> {
                     .cloned(),
                     iter::empty(),
                     NativeCallType::IncludeVMCtxArgument,
+                    true,
                 )?;
             }
             Operator::ElemDrop { elem_index } => {
@@ -5615,6 +5640,7 @@ impl<'a, M: Machine> FuncGen<'a, M> {
                     [WpType::I32].iter().cloned(),
                     iter::empty(),
                     NativeCallType::IncludeVMCtxArgument,
+                    true,
                 )?;
             }
             Operator::MemoryAtomicWait32 { ref memarg } => {
@@ -5667,6 +5693,7 @@ impl<'a, M: Machine> FuncGen<'a, M> {
                         .cloned(),
                     iter::once(WpType::I32),
                     NativeCallType::IncludeVMCtxArgument,
+                    true,
                 )?;
             }
             Operator::MemoryAtomicWait64 { ref memarg } => {
@@ -5719,6 +5746,7 @@ impl<'a, M: Machine> FuncGen<'a, M> {
                         .cloned(),
                     iter::once(WpType::I32),
                     NativeCallType::IncludeVMCtxArgument,
+                    true,
                 )?;
             }
             Operator::MemoryAtomicNotify { ref memarg } => {
@@ -5767,6 +5795,7 @@ impl<'a, M: Machine> FuncGen<'a, M> {
                     [WpType::I32, WpType::I32, WpType::I32].iter().cloned(),
                     iter::once(WpType::I32),
                     NativeCallType::IncludeVMCtxArgument,
+                    true,
                 )?;
             }
             _ => {

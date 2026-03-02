@@ -2304,7 +2304,11 @@ impl Machine for MachineRiscv {
         )
     }
 
-    fn get_simd_return_register(&self, float_idx: usize) -> Option<AbstractLocation<Self::GPR, Self::SIMD>> {
+    fn get_simd_return_register(
+        &self,
+        float_idx: usize,
+        _calling_convention: CallingConvention,
+    ) -> Option<AbstractLocation<Self::GPR, Self::SIMD>> {
         // RISC-V: floating-point return values are in FA0 (F10) and FA1 (F11).
         const RISCV_FLOAT_RETURN_REGISTERS: [FPR; 2] = [FPR::F10, FPR::F11];
         RISCV_FLOAT_RETURN_REGISTERS

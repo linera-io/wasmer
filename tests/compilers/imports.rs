@@ -513,3 +513,107 @@ fn instance_local_memory_lifetime(config: crate::Config) -> Result<()> {
 
     Ok(())
 }
+
+/// Verify that f32/f64 return values from an imported host function are read
+/// from the correct SIMD registers (XMM0/V0/FA0) per the C ABI.
+#[compiler_test(imports)]
+fn import_returns_f32(config: crate::Config) -> Result<()> {
+    let mut store = config.store();
+    let get_f32 = Function::new_typed(&mut store, || -> f32 { 42.5_f32 });
+
+    let wat = r#"(module
+    (import "host" "get_f32" (func $get_f32 (result f32)))
+    (func (export "run") (result f32)
+      (call $get_f32))
+)"#;
+    let module = Module::new(&store, wat)?;
+    let instance = Instance::new(
+        &mut store,
+        &module,
+        &imports! { "host" => { "get_f32" => get_f32 } },
+    )?;
+    let run: TypedFunction<(), f32> = instance.exports.get_typed_function(&store, "run")?;
+    assert_eq!(run.call(&mut store)?, 42.5_f32);
+    Ok(())
+}
+
+#[compiler_test(imports)]
+fn import_returns_f64(config: crate::Config) -> Result<()> {
+    let mut store = config.store();
+    let get_f64 = Function::new_typed(&mut store, || -> f64 { 1.23456789_f64 });
+
+    let wat = r#"(module
+    (import "host" "get_f64" (func $get_f64 (result f64)))
+    (func (export "run") (result f64)
+      (call $get_f64))
+)"#;
+    let module = Module::new(&store, wat)?;
+    let instance = Instance::new(
+        &mut store,
+        &module,
+        &imports! { "host" => { "get_f64" => get_f64 } },
+    )?;
+    let run: TypedFunction<(), f64> = instance.exports.get_typed_function(&store, "run")?;
+    assert_eq!(run.call(&mut store)?, 1.23456789_f64);
+    Ok(())
+}
+
+/// Verify that local wasm-to-wasm calls returning f32/f64 still work correctly
+/// after the SIMD return register fix (which must not apply to local calls).
+#[compiler_test(imports)]
+fn local_wasm_float_call_f32(config: crate::Config) -> Result<()> {
+    let mut store = config.store();
+
+    let wat = r#"(module
+    (func $helper (result f32) (f32.const 3.14))
+    (func (export "run") (result f32) (call $helper))
+)"#;
+    let module = Module::new(&store, wat)?;
+    let instance = Instance::new(&mut store, &module, &imports! {})?;
+    let run: TypedFunction<(), f32> = instance.exports.get_typed_function(&store, "run")?;
+    let result = run.call(&mut store)?;
+    assert!((result - 3.14_f32).abs() < 1e-6, "got {result}");
+    Ok(())
+}
+
+#[compiler_test(imports)]
+fn local_wasm_float_call_f64(config: crate::Config) -> Result<()> {
+    let mut store = config.store();
+
+    let wat = r#"(module
+    (func $helper (result f64) (f64.const 2.718281828))
+    (func (export "run") (result f64) (call $helper))
+)"#;
+    let module = Module::new(&store, wat)?;
+    let instance = Instance::new(&mut store, &module, &imports! {})?;
+    let run: TypedFunction<(), f64> = instance.exports.get_typed_function(&store, "run")?;
+    let result = run.call(&mut store)?;
+    assert!((result - 2.718281828_f64).abs() < 1e-9, "got {result}");
+    Ok(())
+}
+
+/// Verify mixed int+float import: both the integer and float return values
+/// are read from the correct registers.
+#[compiler_test(imports)]
+fn import_mixed_int_float_args(config: crate::Config) -> Result<()> {
+    let mut store = config.store();
+    // Host function: takes (i32, f32), returns f64 = i32 + f32 as f64
+    let compute = Function::new_typed(&mut store, |a: i32, b: f32| -> f64 {
+        (a as f64) + (b as f64)
+    });
+
+    let wat = r#"(module
+    (import "host" "compute" (func $compute (param i32 f32) (result f64)))
+    (func (export "run") (result f64)
+      (call $compute (i32.const 10) (f32.const 0.5)))
+)"#;
+    let module = Module::new(&store, wat)?;
+    let instance = Instance::new(
+        &mut store,
+        &module,
+        &imports! { "host" => { "compute" => compute } },
+    )?;
+    let run: TypedFunction<(), f64> = instance.exports.get_typed_function(&store, "run")?;
+    assert_eq!(run.call(&mut store)?, 10.5_f64);
+    Ok(())
+}

@@ -249,7 +249,11 @@ pub trait Machine {
     ) -> Location<Self::GPR, Self::SIMD>;
     /// Get the SIMD register used for the nth floating-point return value in the
     /// platform's C ABI. Returns `None` if the value would be on the stack.
-    fn get_simd_return_register(&self, float_idx: usize) -> Option<Location<Self::GPR, Self::SIMD>>;
+    fn get_simd_return_register(
+        &self,
+        float_idx: usize,
+        calling_convention: CallingConvention,
+    ) -> Option<Location<Self::GPR, Self::SIMD>>;
     /// move a location to another
     fn move_location(
         &mut self,
