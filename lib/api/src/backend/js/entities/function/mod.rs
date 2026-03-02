@@ -51,7 +51,7 @@ impl Function {
     }
 
     #[allow(clippy::cast_ptr_alignment)]
-    pub fn new_with_env<FT, F, T: Send + 'static>(
+    pub fn new_with_env<FT, F, T: 'static>(
         store: &mut impl AsStoreMut,
         env: &FunctionEnv<T>,
         ty: FT,
@@ -419,7 +419,7 @@ macro_rules! impl_host_function {
 
         #[allow(non_snake_case)]
         pub(crate) fn [<gen_fn_callback_ $c_struct_name:lower>]
-            <$( $x: FromToNativeWasmType, )* Rets: WasmTypeList, RetsAsResult: IntoResult<Rets>, T: Send + 'static,  Func: Fn(FunctionEnvMut<T>, $( $x , )*) -> RetsAsResult + 'static>
+            <$( $x: FromToNativeWasmType, )* Rets: WasmTypeList, RetsAsResult: IntoResult<Rets>, T: 'static,  Func: Fn(FunctionEnvMut<T>, $( $x , )*) -> RetsAsResult + 'static>
             (this: &Func) -> crate::backend::js::vm::VMFunctionCallback {
 
             /// This is a function that wraps the real host
@@ -430,7 +430,7 @@ macro_rules! impl_host_function {
                 $( $x: FromToNativeWasmType, )*
                 Rets: WasmTypeList,
                 RetsAsResult: IntoResult<Rets>,
-                T: Send + 'static,
+                T: 'static,
                 Func: Fn(FunctionEnvMut<'_, T>, $( $x , )*) -> RetsAsResult + 'static,
             {
                 let mut store = unsafe { StoreMut::from_raw(store_ptr as *mut _) };

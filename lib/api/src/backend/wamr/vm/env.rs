@@ -3,12 +3,12 @@ use std::any::Any;
 /// Underlying FunctionEnvironment used by a `VMFunction`.
 #[derive(Debug)]
 pub struct VMFunctionEnvironment {
-    pub(crate) contents: Box<dyn Any + Send + 'static>,
+    pub(crate) contents: Box<dyn Any>,
 }
 
 impl VMFunctionEnvironment {
     /// Wraps the given value to expose it to Wasm code as a function context.
-    pub fn new(val: impl Any + Send + 'static) -> Self {
+    pub fn new(val: impl Any) -> Self {
         Self {
             contents: Box::new(val),
         }
@@ -16,13 +16,13 @@ impl VMFunctionEnvironment {
 
     #[allow(clippy::should_implement_trait)]
     /// Returns a reference to the underlying value.
-    pub fn as_ref(&self) -> &(dyn Any + Send + 'static) {
+    pub fn as_ref(&self) -> &dyn Any {
         &*self.contents
     }
 
     #[allow(clippy::should_implement_trait)]
     /// Returns a mutable reference to the underlying value.
-    pub fn as_mut(&mut self) -> &mut (dyn Any + Send + 'static) {
+    pub fn as_mut(&mut self) -> &mut dyn Any {
         &mut *self.contents
     }
 }

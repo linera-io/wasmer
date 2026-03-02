@@ -73,7 +73,7 @@ impl Function {
     }
 
     #[allow(clippy::cast_ptr_alignment)]
-    pub fn new_with_env<FT, F, T: Send + 'static>(
+    pub fn new_with_env<FT, F, T: 'static>(
         store: &mut impl AsStoreMut,
         env: &FunctionEnv<T>,
         ty: FT,
@@ -239,7 +239,7 @@ impl Function {
         F: crate::HostFunction<T, Args, Rets, WithEnv>,
         Args: WasmTypeList,
         Rets: WasmTypeList,
-        T: Send + 'static,
+        T: 'static,
     {
         let mut param_types = Args::wasm_types()
             .iter()
@@ -440,14 +440,14 @@ impl Function {
     }
 }
 
-fn make_fn_callback<F, T: Send + 'static>(func: &F, args: usize) -> CCallback
+fn make_fn_callback<F, T: 'static>(func: &F, args: usize) -> CCallback
 where
     F: Fn(FunctionEnvMut<'_, T>, &[Value]) -> Result<Vec<Value>, RuntimeError>
         + 'static
         + Send
         + Sync,
 {
-    unsafe extern "C" fn fn_callback<F, T: Send + 'static>(
+    unsafe extern "C" fn fn_callback<F, T: 'static>(
         env: *mut c_void,
         args: *const wasm_val_vec_t,
         rets: *mut wasm_val_vec_t,
@@ -633,14 +633,14 @@ macro_rules! impl_host_function {
 
         #[allow(non_snake_case)]
         pub(crate) fn [<gen_fn_callback_ $c_struct_name:lower>]
-            <$( $x: FromToNativeWasmType, )* Rets: WasmTypeList, RetsAsResult: IntoResult<Rets>, T: Send + 'static,  Func: Fn(FunctionEnvMut<T>, $( $x , )*) -> RetsAsResult + 'static>
+            <$( $x: FromToNativeWasmType, )* Rets: WasmTypeList, RetsAsResult: IntoResult<Rets>, T: 'static,  Func: Fn(FunctionEnvMut<T>, $( $x , )*) -> RetsAsResult + 'static>
             (this: &Func) -> crate::backend::wasmi::vm::VMFunctionCallback {
             unsafe extern "C" fn func_wrapper<$( $x, )* Rets, RetsAsResult, Func, T>(env: *mut c_void, args: *const wasm_val_vec_t, results: *mut wasm_val_vec_t) -> *mut wasm_trap_t
             where
               $( $x: FromToNativeWasmType, )*
               Rets: WasmTypeList,
               RetsAsResult: IntoResult<Rets>,
-              T: Send + 'static,
+              T: 'static,
               Func: Fn(FunctionEnvMut<'_, T>, $( $x , )*) -> RetsAsResult + 'static,
             {
 

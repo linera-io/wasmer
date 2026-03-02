@@ -18,7 +18,7 @@ pub struct FunctionEnv<T> {
     marker: PhantomData<T>,
 }
 
-impl<T: Any + Send + 'static + Sized> FunctionEnv<T> {
+impl<T: Any + 'static + Sized> FunctionEnv<T> {
     /// Make a new FunctionEnv
     pub fn new(store: &mut impl AsStoreMut, value: T) -> Self {
         Self {
@@ -125,14 +125,14 @@ pub struct FunctionEnvMut<'a, T: 'a> {
 
 impl<T> Debug for FunctionEnvMut<'_, T>
 where
-    T: Send + Debug + 'static,
+    T: Debug + 'static,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         self.func_env.as_ref(&self.store_mut).fmt(f)
     }
 }
 
-impl<T: Send + 'static> FunctionEnvMut<'_, T> {
+impl<T: 'static> FunctionEnvMut<'_, T> {
     /// Returns a reference to the host state in this function environement.
     pub fn data(&self) -> &T {
         self.func_env.as_ref(&self.store_mut)
@@ -245,7 +245,7 @@ pub struct AsyncFunctionEnvHandleMut<T> {
 #[cfg(feature = "experimental-async")]
 impl<T> Debug for AsyncFunctionEnvMut<T>
 where
-    T: Send + Debug + 'static,
+    T: Debug + 'static,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &self.store {

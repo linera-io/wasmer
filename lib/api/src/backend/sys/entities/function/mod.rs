@@ -47,7 +47,7 @@ impl From<StoreHandle<VMFunction>> for Function {
 }
 
 impl Function {
-    pub(crate) fn new_with_env<FT, F, T: Send + 'static>(
+    pub(crate) fn new_with_env<FT, F, T: 'static>(
         store: &mut impl AsStoreMut,
         env: &FunctionEnv<T>,
         ty: FT,
@@ -396,7 +396,7 @@ impl Function {
         )
     }
 
-    pub(crate) fn new_typed_with_env<T: Send + 'static, F, Args, Rets>(
+    pub(crate) fn new_typed_with_env<T: 'static, F, Args, Rets>(
         store: &mut impl AsStoreMut,
         env: &FunctionEnv<T>,
         func: F,
@@ -1022,12 +1022,12 @@ macro_rules! impl_host_function {
 
         #[allow(non_snake_case)]
         pub(crate) fn [<gen_fn_callback_ $c_struct_name:lower>]
-            <$( $x: FromToNativeWasmType, )* Rets: WasmTypeList, RetsAsResult: IntoResult<Rets>, T: Send + 'static,  Func: Fn(FunctionEnvMut<T>, $( $x , )*) -> RetsAsResult + 'static>
+            <$( $x: FromToNativeWasmType, )* Rets: WasmTypeList, RetsAsResult: IntoResult<Rets>, T: 'static,  Func: Fn(FunctionEnvMut<T>, $( $x , )*) -> RetsAsResult + 'static>
             (this: &Func) -> crate::backend::sys::vm::VMFunctionCallback {
             /// This is a function that wraps the real host
             /// function. Its address will be used inside the
             /// runtime.
-            unsafe extern "C-unwind" fn func_wrapper<T: Send + 'static, $( $x, )* Rets, RetsAsResult, Func>( env: &StaticFunction<Func, T>, $( $x: <$x::Native as NativeWasmType>::Abi, )* ) -> Rets::CStruct
+            unsafe extern "C-unwind" fn func_wrapper<T: 'static, $( $x, )* Rets, RetsAsResult, Func>( env: &StaticFunction<Func, T>, $( $x: <$x::Native as NativeWasmType>::Abi, )* ) -> Rets::CStruct
                 where
                 $( $x: FromToNativeWasmType, )*
                 Rets: WasmTypeList,

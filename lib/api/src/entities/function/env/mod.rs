@@ -21,7 +21,7 @@ impl<T> FunctionEnv<T> {
     /// Make a new FunctionEnv
     pub fn new(store: &mut impl AsStoreMut, value: T) -> Self
     where
-        T: Any + Send + 'static + Sized,
+        T: Any + 'static + Sized,
     {
         Self(BackendFunctionEnv::new(store, value))
     }
@@ -34,7 +34,7 @@ impl<T> FunctionEnv<T> {
     /// Get the data as reference
     pub fn as_ref<'a>(&self, store: &'a impl AsStoreRef) -> &'a T
     where
-        T: Any + Send + 'static + Sized,
+        T: Any + 'static + Sized,
     {
         self.0.as_ref(store)
     }
@@ -42,7 +42,7 @@ impl<T> FunctionEnv<T> {
     /// Get the data as mutable
     pub fn as_mut<'a>(&self, store: &'a mut impl AsStoreMut) -> &'a mut T
     where
-        T: Any + Send + 'static + Sized,
+        T: Any + 'static + Sized,
     {
         self.0.as_mut(store)
     }
@@ -50,7 +50,7 @@ impl<T> FunctionEnv<T> {
     /// Convert it into a `FunctionEnvMut`
     pub fn into_mut(self, store: &mut impl AsStoreMut) -> FunctionEnvMut<'_, T>
     where
-        T: Any + Send + 'static + Sized,
+        T: Any + 'static + Sized,
     {
         self.0.into_mut(store)
     }
@@ -60,7 +60,7 @@ impl<T> FunctionEnv<T> {
 #[derive(derive_more::From)]
 pub struct FunctionEnvMut<'a, T: 'a>(pub(crate) BackendFunctionEnvMut<'a, T>);
 
-impl<T: Send + 'static> FunctionEnvMut<'_, T> {
+impl<T: 'static> FunctionEnvMut<'_, T> {
     /// Returns a reference to the host state in this function environement.
     pub fn data(&self) -> &T {
         self.0.data()
@@ -112,7 +112,7 @@ impl<T> AsStoreMut for FunctionEnvMut<'_, T> {
 
 impl<T> std::fmt::Debug for FunctionEnvMut<'_, T>
 where
-    T: Send + std::fmt::Debug + 'static,
+    T: std::fmt::Debug + 'static,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         self.0.fmt(f)

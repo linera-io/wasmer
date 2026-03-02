@@ -16,7 +16,7 @@ macro_rules! impl_host_function {
             $( $x: FromToNativeWasmType, )*
             Rets: WasmTypeList,
             RetsAsResult: IntoResult<Rets>,
-            T: Send + 'static,
+            T: 'static,
             Func: Fn(FunctionEnvMut<'_, T>, $( $x , )*) -> RetsAsResult + 'static,
         {
             #[allow(non_snake_case)]

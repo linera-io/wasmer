@@ -54,7 +54,7 @@ impl<T> BackendFunctionEnv<T> {
     /// Make a new FunctionEnv
     pub fn new(store: &mut impl AsStoreMut, value: T) -> Self
     where
-        T: Any + Send + 'static + Sized,
+        T: Any + 'static + Sized,
     {
         match store.as_store_mut().inner.store {
             #[cfg(feature = "sys")]
@@ -90,7 +90,7 @@ impl<T> BackendFunctionEnv<T> {
     /// Get the data as reference
     pub fn as_ref<'a>(&self, store: &'a impl AsStoreRef) -> &'a T
     where
-        T: Any + Send + 'static + Sized,
+        T: Any + 'static + Sized,
     {
         match_rt!(on self => f {
             f.as_ref(store)
@@ -100,7 +100,7 @@ impl<T> BackendFunctionEnv<T> {
     /// Get the data as mutable
     pub fn as_mut<'a>(&self, store: &'a mut impl AsStoreMut) -> &'a mut T
     where
-        T: Any + Send + 'static + Sized,
+        T: Any + 'static + Sized,
     {
         match_rt!(on self => s {
             s.as_mut(store)
@@ -110,7 +110,7 @@ impl<T> BackendFunctionEnv<T> {
     /// Convert it into a `FunctionEnvMut`
     pub fn into_mut(self, store: &mut impl AsStoreMut) -> FunctionEnvMut<'_, T>
     where
-        T: Any + Send + 'static + Sized,
+        T: Any + 'static + Sized,
     {
         match_rt!(on self => f {
             f.into_mut(store).into()
@@ -146,7 +146,7 @@ pub enum BackendFunctionEnvMut<'a, T: 'a> {
     Jsc(crate::backend::jsc::function::env::FunctionEnvMut<'a, T>),
 }
 
-impl<T: Send + 'static> BackendFunctionEnvMut<'_, T> {
+impl<T: 'static> BackendFunctionEnvMut<'_, T> {
     /// Returns a reference to the host state in this function environement.
     pub fn data(&self) -> &T {
         match_rt!(on self => f {
@@ -243,7 +243,7 @@ impl<T> AsStoreMut for BackendFunctionEnvMut<'_, T> {
 
 impl<T> std::fmt::Debug for BackendFunctionEnvMut<'_, T>
 where
-    T: Send + std::fmt::Debug + 'static,
+    T: std::fmt::Debug + 'static,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match_rt!(on self => s {
