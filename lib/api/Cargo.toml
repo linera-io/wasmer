@@ -1,6 +1,6 @@
 [package]
-name = "wasmer"
-description = "High-performance WebAssembly runtime"
+name = "linera-wasmer"
+description = "High-performance WebAssembly runtime (Linera fork)"
 categories = ["wasm"]
 keywords = ["wasm", "webassembly", "runtime", "vm"]
 readme = "README.md"
@@ -61,7 +61,7 @@ wasmer-derive = { path = "../derive", version = "=7.1.0-alpha.1" }
 wasmer-types = { path = "../types", version = "=7.1.0-alpha.1" }
 target-lexicon = { workspace = true, default-features = false }
 # - Optional dependencies for `sys`.
-wasmer-compiler-singlepass = { path = "../compiler-singlepass", version = "=7.1.0-alpha.1", optional = true }
+wasmer-compiler-singlepass = { package = "linera-wasmer-compiler-singlepass", path = "../compiler-singlepass", version = "=7.1.0-alpha.1", optional = true }
 wasmer-compiler-cranelift = { path = "../compiler-cranelift", version = "=7.1.0-alpha.1", optional = true }
 wasmer-compiler-llvm = { path = "../compiler-llvm", version = "=7.1.0-alpha.1", optional = true }
 corosensei = { workspace = true, optional = true }

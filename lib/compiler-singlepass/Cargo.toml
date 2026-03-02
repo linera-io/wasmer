@@ -1,6 +1,6 @@
 [package]
-name = "wasmer-compiler-singlepass"
-description = "Singlepass compiler for Wasmer WebAssembly runtime"
+name = "linera-wasmer-compiler-singlepass"
+description = "Singlepass compiler for Wasmer WebAssembly runtime (Linera fork)"
 categories = ["wasm"]
 keywords = ["wasm", "webassembly", "compiler", "singlepass"]
 documentation = "https://docs.rs/wasmer-compiler-singlepass/"

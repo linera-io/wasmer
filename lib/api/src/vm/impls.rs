@@ -13,7 +13,7 @@ impl VMExternToExtern for VMExtern {
 impl VMFunctionEnvironment {
     #[allow(clippy::should_implement_trait)]
     /// Returns a reference to the underlying value.
-    pub fn as_ref(&self) -> &(dyn std::any::Any + Send + 'static) {
+    pub fn as_ref(&self) -> &dyn std::any::Any {
         match_rt!(on self => s {
             s.as_ref()
         })
@@ -21,13 +21,13 @@ impl VMFunctionEnvironment {
 
     #[allow(clippy::should_implement_trait)]
     /// Returns a mutable reference to the underlying value.
-    pub fn as_mut(&mut self) -> &mut (dyn std::any::Any + Send + 'static) {
+    pub fn as_mut(&mut self) -> &mut dyn std::any::Any {
         match_rt!(on self => s {
             s.as_mut()
         })
     }
 
-    pub fn contents(self) -> Box<(dyn std::any::Any + Send + 'static)> {
+    pub fn contents(self) -> Box<dyn std::any::Any> {
         match_rt!(on self => s {
             s.contents
         })
