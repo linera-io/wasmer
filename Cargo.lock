@@ -1061,7 +1061,6 @@ checksum = "bd070e393353796e801d209ad339e89596eb4c8d430d18ede6a1cced8fafbd99"
 dependencies = [
  "autocfg",
  "hashbrown 0.12.3",
- "serde",
 ]
 
 [[package]]
@@ -1157,7 +1156,7 @@ dependencies = [
  "cfg-if",
  "derivative",
  "hashbrown 0.11.2",
- "indexmap 1.9.3",
+ "indexmap 2.13.0",
  "js-sys",
  "linera-wasmer-compiler",
  "linera-wasmer-compiler-cranelift",
@@ -1267,7 +1266,7 @@ dependencies = [
  "derivative",
  "enum-iterator",
  "fnv",
- "indexmap 1.9.3",
+ "indexmap 2.13.0",
  "lazy_static",
  "libc",
  "loupe",
