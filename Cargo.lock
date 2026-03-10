@@ -1061,7 +1061,6 @@ checksum = "bd070e393353796e801d209ad339e89596eb4c8d430d18ede6a1cced8fafbd99"
 dependencies = [
  "autocfg",
  "hashbrown 0.12.3",
- "serde",
 ]
 
 [[package]]
@@ -1157,7 +1156,7 @@ dependencies = [
  "cfg-if",
  "derivative",
  "hashbrown 0.11.2",
- "indexmap 1.9.3",
+ "indexmap 2.13.0",
  "js-sys",
  "linera-wasmer-compiler",
  "linera-wasmer-compiler-cranelift",
@@ -1178,7 +1177,7 @@ dependencies = [
  "wasm-bindgen",
  "wasm-bindgen-test",
  "wasmer-derive",
- "wasmer-types",
+ "wasmer-types 4.4.0-linera.7",
  "wasmparser 0.121.2",
  "wat",
  "windows-sys 0.59.0",
@@ -1210,7 +1209,7 @@ dependencies = [
  "smallvec",
  "thiserror",
  "wasmer-object",
- "wasmer-types",
+ "wasmer-types 4.4.0-linera.7",
  "wasmparser 0.121.2",
  "windows-sys 0.59.0",
  "xxhash-rust",
@@ -1232,7 +1231,7 @@ dependencies = [
  "smallvec",
  "target-lexicon",
  "tracing",
- "wasmer-types",
+ "wasmer-types 4.4.0-linera.7",
 ]
 
 [[package]]
@@ -1251,7 +1250,7 @@ dependencies = [
  "rayon",
  "smallvec",
  "target-lexicon",
- "wasmer-types",
+ "wasmer-types 4.4.0-linera.7",
 ]
 
 [[package]]
@@ -1267,7 +1266,7 @@ dependencies = [
  "derivative",
  "enum-iterator",
  "fnv",
- "indexmap 1.9.3",
+ "indexmap 2.13.0",
  "lazy_static",
  "libc",
  "loupe",
@@ -1280,7 +1279,7 @@ dependencies = [
  "serde",
  "thiserror",
  "tracing",
- "wasmer-types",
+ "wasmer-types 4.4.0-linera.7",
  "windows-sys 0.59.0",
 ]
 
@@ -2657,7 +2656,29 @@ checksum = "55ff9bd75c81a20b751cecc9d5e056c7d7212950d423664155fd517cdd5d926f"
 dependencies = [
  "object 0.29.0",
  "thiserror",
- "wasmer-types",
+ "wasmer-types 4.4.0",
+]
+
+[[package]]
+name = "wasmer-types"
+version = "4.4.0-linera.7"
+dependencies = [
+ "bytecheck",
+ "enum-iterator",
+ "enumset",
+ "getrandom 0.2.17",
+ "hex",
+ "indexmap 2.13.0",
+ "loupe",
+ "memoffset",
+ "more-asserts",
+ "rkyv",
+ "serde",
+ "serde_bytes",
+ "sha2",
+ "target-lexicon",
+ "thiserror",
+ "xxhash-rust",
 ]
 
 [[package]]
@@ -2672,11 +2693,8 @@ dependencies = [
  "getrandom 0.2.17",
  "hex",
  "indexmap 1.9.3",
- "loupe",
  "more-asserts",
  "rkyv",
- "serde",
- "serde_bytes",
  "sha2",
  "target-lexicon",
  "thiserror",
@@ -2712,7 +2730,7 @@ dependencies = [
  "tracing",
  "tracing-subscriber",
  "ureq",
- "wasmer-types",
+ "wasmer-types 4.4.0-linera.7",
 ]
 
 [[package]]

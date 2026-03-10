@@ -57,7 +57,7 @@ members = [
     # "lib/package",
     # "lib/registry",
     # "lib/sys-utils",
-    # "lib/types",
+    "lib/types",
     # "lib/virtual-io",
     # "lib/virtual-fs",
     # "lib/virtual-net",
@@ -102,7 +102,7 @@ wasmer-wasix = { path = "./lib/wasix" }
 macro-wasmer-universal-test = "=4.4.0"
 wasmer-derive = "=4.4.0"
 wasmer-object = "=4.4.0"
-wasmer-types = "=4.4.0"
+wasmer-types = { version = "=4.4.0-linera.7", path = "lib/types" }
 webc = { version = "6.1.0", default-features = false, features = ["package"] }
 shared-buffer = "0.1.4"
 
@@ -114,7 +114,7 @@ reqwest = { version = "0.12.0", default-features = false }
 enumset = "1.1.0"
 memoffset = "0.9.0"
 wasmparser = { version = "0.121.0", default-features = false }
-rkyv = { version = "0.7.40", features = ["indexmap", "validation", "strict"] }
+rkyv = { version = "0.7.40", features = ["validation"] }
 memmap2 = { version = "0.6.2" }
 toml = {version = "0.5.9", features = ["preserve_order"]}
 indexmap = "2"
