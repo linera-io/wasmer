@@ -69,10 +69,8 @@ impl Trap {
     }
 
     /// Construct a new Wasm trap with the given trap code.
-    ///
-    /// Internally saves a backtrace when constructed.
     pub fn lib(trap_code: TrapCode) -> Self {
-        let backtrace = Backtrace::new_unresolved();
+        let backtrace = Backtrace::from(vec![]);
         Self::Lib {
             trap_code,
             backtrace,
@@ -80,10 +78,8 @@ impl Trap {
     }
 
     /// Construct a new OOM trap with the given source location and trap code.
-    ///
-    /// Internally saves a backtrace when constructed.
     pub fn oom() -> Self {
-        let backtrace = Backtrace::new_unresolved();
+        let backtrace = Backtrace::from(vec![]);
         Self::OOM { backtrace }
     }
 
