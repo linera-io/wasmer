@@ -843,17 +843,15 @@ impl<T> TrapHandlerContextInner<T> {
             })
         });
 
-        // Don't try to generate a backtrace for stack overflows: unwinding
-        // information is often not precise enough to properly describe what is
-        // happenning during a function prologue, which can lead the unwinder to
-        // read invalid memory addresses.
+        // Skip backtrace capture entirely. Backtrace::new_unresolved() calls
+        // _Unwind_Backtrace which invokes _Unwind_Find_FDE for each frame,
+        // taking a process-wide mutex (object_mutex in libgcc or dl_iterate_phdr
+        // in glibc). Under high concurrency this causes severe lock contention
+        // (observed: 67% of CPU in native_queued_spin_lock_slowpath).
         //
-        // See: https://github.com/rust-lang/backtrace-rs/pull/357
-        let backtrace = if signal_trap == Some(TrapCode::StackOverflow) {
-            Backtrace::from(vec![])
-        } else {
-            Backtrace::new_unresolved()
-        };
+        // The WASM-level stack trace (FrameInfo) derived from the backtrace
+        // is lost, but the trap code and error message are preserved.
+        let backtrace = Backtrace::from(vec![]);
 
         // Set up the register state for exception return to force the
         // coroutine to return to its caller with UnwindReason::WasmTrap.

@@ -7,8 +7,8 @@ use wasmer_vm::Trap;
 pub fn get_trace_and_trapcode(trap: &Trap) -> (Vec<FrameInfo>, Option<TrapCode>) {
     let info = FRAME_INFO.read().unwrap();
     match &trap {
-        // A user error
-        Trap::User(_err) => (wasm_trace(&info, None, &Backtrace::new_unresolved()), None),
+        // A user error — skip backtrace to avoid _Unwind_Backtrace lock contention
+        Trap::User(_err) => (Vec::new(), None),
         // A trap caused by the VM being Out of Memory
         Trap::OOM { backtrace } => (wasm_trace(&info, None, backtrace), None),
         // A trap caused by an error on the generated machine code for a Wasm function
